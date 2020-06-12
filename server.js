@@ -2,13 +2,15 @@ const express = require('express')
 const fs = require('fs');
 
 
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const { request } = require('http');
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static('public'));
 
+const AUTH_KEY = "abc123DEF";
 
 getClamSignature = 
 [
@@ -138,36 +140,78 @@ const modRule = [
 ]
 
 
+const MSG_AUTH_EROR = "Authentication error!";
+const MSG_NO_DATA = "No data"
 app.get('/', (req, res) => {
   res.send(helloMsg)
 });
 
+function checkPostReq(reqBody){
+    // console.log(reqBody)
+    if ('key' in reqBody == false || reqBody['key'] != AUTH_KEY){
+        return MSG_AUTH_EROR;
+    }else if ('data' in reqBody == false){
+        return MSG_NO_DATA;
+    }
+    return true;
 
-app.get('/tool/clam_signature', (req, res)=>{
-    res.json(getClamSignature);
+}
+
+app.post('/get/tool/clam_signature', (req, res)=>{
+    inf = req.body;
+    if ('key' in inf == false || inf['key'] != AUTH_KEY){
+        res.status(404).send(MSG_AUTH_EROR);
+    }else{
+        res.json(getClamSignature);
+    }
 });
 
 
-app.get('/update_app_linux',(req, res)=>{
-    res.json(resAppLinux)
+app.post('/get/update_app_linux',(req, res)=>{
+    inf = req.body;
+    if ('key' in inf == false || inf['key'] != AUTH_KEY){
+        res.status(404).send(MSG_AUTH_EROR);
+    }else{
+        res.json(resAppLinux);
+    }
 });
 
-app.get('/update_mod_reulr',(req, res)=>{
-    res.json(modRule)
+app.post('/get/update_mod_reulr',(req, res)=>{
+    inf = req.body;
+    if ('key' in inf == false || inf['key'] != AUTH_KEY){
+        res.status(404).send(MSG_AUTH_EROR);
+    }else{
+        res.json(modRule);
+    }
 });
 
-app.get('/modlist',(req, res)=>{
-    res.json(ruleModPc)
+app.post('/get/modlist',(req, res)=>{
+    inf = req.body;
+    if ('key' in inf == false || inf['key'] != AUTH_KEY){
+        res.status(404).send(MSG_AUTH_EROR);
+    }else{
+        res.json(ruleModPc);
+    }
 });
 
-app.get('/clamlist',(req, res)=>{
-    res.json(ruleClamPc)
+app.post('/get/clamlist',(req, res)=>{
+    inf = req.body
+    if ('key' in inf == false || inf['key'] != AUTH_KEY){
+        res.status(404).send(MSG_AUTH_EROR)
+    }else{
+        res.json(ruleClamPc)
+    }
 });
 
 app.post('/update_app_linux',(req, res)=>{
-    str = req.body
-    console.log(str)
-    listApp = str
+    body = req.body;
+    msg = checkPostReq(body);
+    if (msg != true){
+        res.status(404).send(msg);
+        return;
+    }
+
+    listApp = body['data'];
     var ssNum =0;
     var totalNum =0;
     for (i=0; i< listApp.length; i++){
@@ -190,24 +234,33 @@ app.post('/update_app_linux',(req, res)=>{
     }
 });
 
-app.get('/update_app_window',(req, res)=>{
-    res.json(resAppWin)
+app.post('/get/update_app_window',(req, res)=>{
+    inf = req.body;
+    if ('key' in inf == false || inf['key'] != AUTH_KEY){
+        res.status(404).send(MSG_AUTH_EROR);
+    }else{
+        res.json(resAppWin);
+    }
 });
 
 app.post('/update_app_window',(req, res)=>{
-    console.log(req.body)
-    listApp = req.body
+    body = req.body;
+    msg = checkPostReq(body);
+    if (msg != true){
+        res.status(404).send(msg);
+        return;
+    }
+    
+    listApp = body['data'];
     var ssNum =0;
     var totalNum =0;
     for (i=0; i< listApp.length; i++){
         update = listApp[i]
-        console.log(update)
         
         check = 1
         attAppWin.forEach(att => {
             if (!(att in update)){
                 check =0;
-                console.log(att)
             }
         });
         ssNum += check;
@@ -220,14 +273,25 @@ app.post('/update_app_window',(req, res)=>{
     }
 });
 
-app.get('/update_rule_firewall',(req, res)=>{
-    res.json(resFirewall)
+app.post('/get/update_rule_firewall',(req, res)=>{
+    inf = req.body;
+    if ('key' in inf == false || inf['key'] != AUTH_KEY){
+        res.status(404).send(MSG_AUTH_EROR);
+    }else{
+        res.json(resFirewall);
+    }
 })
 
 
 app.post('/update_rule_firewall',(req, res)=>{
-    console.log(req.body);
-    listRule = req.body;
+    body = req.body;
+    msg = checkPostReq(body);
+    if (msg != true){
+        res.status(404).send(msg);
+        return;
+    }
+    
+    listRule = body['data'];
     var ssNum =0;
     var totalNum =0;
     for (i=0; i< listRule.length; i++){
@@ -252,8 +316,15 @@ app.post('/update_rule_firewall',(req, res)=>{
 
 
 app.post('/checkservice',(req, res)=>{
-    console.log(req.body);
-    check = req.body;
+    body = req.body;
+    msg = checkPostReq(body);
+    // console.log(msg)
+    if (msg != true){
+        res.status(404).send(msg);
+        return;
+    }
+    
+    check = JSON.parse(body['data']);
     ret = 1;
     chechService.forEach(att => {
         if(!check.hasOwnProperty(att)){
@@ -268,8 +339,15 @@ app.post('/checkservice',(req, res)=>{
 });
 
 app.post('/virus-scan', (req, res)=>{
-    console.log(req.body);
-    listRule = (req.body);
+    body = req.body;
+    msg = checkPostReq(body);
+    if (msg != true){
+        res.status(404).send(msg);
+        return;
+    }
+    
+    listRule = JSON.parse(body['data']);
+
     var ssNum =0;
     var totalNum =0;
     for (i=0; i< listRule.length; i++){
@@ -292,8 +370,15 @@ app.post('/virus-scan', (req, res)=>{
 
 
 app.post('/moniter-update', (req, res)=>{
-    console.log(req.body);
-    alertObj = req.body;
+    body = req.body;
+    msg = checkPostReq(body);
+    if (msg != true){
+        res.status(404).send(msg);
+        return;
+    }
+    
+    alertObj = JSON.parse(body['data']);
+
     if(alertObj.hasOwnProperty('alert_list')){
         alertList = alertObj['alert_list'];
         var ssNum =0;
@@ -315,8 +400,14 @@ app.post('/moniter-update', (req, res)=>{
 });
 
 app.post('/integrity-update', (req, res)=>{
-    console.log(req.body);
-    alertObj = req.body;
+    body = req.body;
+    msg = checkPostReq(body);
+    if (msg != true){
+        res.status(404).send(msg);
+        return;
+    }
+    
+    alertObj = JSON.parse(body['data']);
     if(alertObj.hasOwnProperty('alert_list')){
         alertList = alertObj['alert_list'];
         var ssNum =0;
