@@ -25,6 +25,7 @@ getClamSignature =
    
     }
 ]
+
 const helloMsg = "Wellcome to test Manager IPS"
 
 const attAppLinux =  ['description', 'application_name', 'architect', 'version']
@@ -99,11 +100,19 @@ const resFirewall = [
     }
 ]
 
-const rulePc = [
+const ruleModPc = [
     {
-      "bkcsPC": "trustware,dga",
-      "PC1": "dga",
-      "PC2": "custom"
+      "bkcsPC": ["trustware","dga"],
+      "PC1": ["dga"],
+      "PC2": ["custom"]
+    }
+]
+
+const ruleClamPc = [
+    {
+      "bkcsPC": ["clamrule1"],
+      "PC1": ["dga"],
+      "PC2": ["custom"]
     }
 ]
 
@@ -148,7 +157,11 @@ app.get('/update_mod_reulr',(req, res)=>{
 });
 
 app.get('/modlist',(req, res)=>{
-    res.json(rulePc)
+    res.json(ruleModPc)
+});
+
+app.get('/clamlist',(req, res)=>{
+    res.json(ruleClamPc)
 });
 
 app.post('/update_app_linux',(req, res)=>{
