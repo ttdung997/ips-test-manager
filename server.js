@@ -196,6 +196,7 @@ app.post('/get/modlist',(req, res)=>{
 
 app.post('/get/clamlist',(req, res)=>{
     inf = req.body
+    // console.log(inf['key'])
     if ('key' in inf == false || inf['key'] != AUTH_KEY){
         res.status(404).send(MSG_AUTH_EROR)
     }else{
@@ -318,7 +319,6 @@ app.post('/update_rule_firewall',(req, res)=>{
 app.post('/checkservice',(req, res)=>{
     body = req.body;
     msg = checkPostReq(body);
-    // console.log(msg)
     if (msg != true){
         res.status(404).send(msg);
         return;
