@@ -187,6 +187,7 @@ app.post('/get/update_mod_reulr',(req, res)=>{
 
 app.post('/get/modlist',(req, res)=>{
     inf = req.body;
+    // console.log(req.body)
     if ('key' in inf == false || inf['key'] != AUTH_KEY){
         res.status(404).send(MSG_AUTH_EROR);
     }else{
@@ -217,7 +218,7 @@ app.post('/update_app_linux',(req, res)=>{
     var totalNum =0;
     for (i=0; i< listApp.length; i++){
         update = str[i]
-        console.log(update)
+        // console.log(update)
         
         check = 1
         attAppLinux.forEach(att => {
@@ -297,7 +298,7 @@ app.post('/update_rule_firewall',(req, res)=>{
     var totalNum =0;
     for (i=0; i< listRule.length; i++){
         update = listRule[i]
-        console.log(update)
+        // console.log(update)
         
         check = 1
         attFireWall.forEach(att => {

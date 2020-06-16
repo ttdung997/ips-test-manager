@@ -1,7 +1,7 @@
 # Quy trình cài đặt và sử dụng IPS-Manager
 ## Tổng quan
 - Manager phiên bản demo được nhóm BKCS thiết kế dựa trên nền tảng nodeJS, với các cấu trúc tuân theo chuẩn API đã quy định trong báo cáo kèm theo
-- Nhóm yêu cầu các API được thiết kế trong hệ thống IPS-Manager trong thực tế phải theo đúng các định dạng như mẫu, để quá trình tương tác với HOST-IPS diễn ra thuận tiện nhất
+-  Đề nghị  API được thiết kế trong hệ thống IPS-Manager trong thực tế phải theo đúng các định dạng như mẫu, để quá trình tương tác với HOST-IPS diễn ra thuận tiện nhất
 ## Cài đặt và sử dụng IPS-Manager phiên bảo demo
 - IPS-Manager phiên bảo demo được lập trình để sử dụng trên các hệ điều hành linux
 
